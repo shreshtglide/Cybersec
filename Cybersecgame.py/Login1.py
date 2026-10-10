@@ -5,7 +5,10 @@ import sys
 from tkinter import messagebox
 
 user_re=re.compile(r"^[a-zA-Z0-9@_]{4,6}$")
-pwd_re=re.compile(r"^(?=.{6,10}$)[a-z]+[A-Z]+[0-9]+[!@#$%^&*]+$")
+pwd_re = re.compile(
+    r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)"
+    r"(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*_]{6,10}$"
+)
 ctk.set_appearance_mode("dark")
 PURPLE="#B57BFF"
 PURPLE_DIM="#7A4FCC"
@@ -85,16 +88,16 @@ class Login_app:
         self.pwd=self.pwd_entry.get().strip()
         if not self.userid or not self.pwd:
             #self.error_label.configure(text="Please enter the details")
-            self.messagebox.show("Details","Please enter the details")
+            messagebox.showerror("Details","Please enter the details")
          
 
         elif not user_re.match(self.userid):
             #self.error_label.configure(text="Username: 4-20 Letters, Numbers or _ / @ only")
-            self.messagebox.show("Username","Username: 4-20 Letters, Numbers or _ / @ only") 
+            messagebox.showerror("Username","Username: 4-6 Letters, Numbers or _ / @ only") 
 
         elif not pwd_re.match(self.pwd):
             #self.error_label.configure(text="Password: 6-10 Characters, with a capital alphabet, small alphabet, number and special character") 
-            self.messagebox.show("Password","Password: 6-10 Characters, with a capital alphabet, small alphabet, number and special character")
+            messagebox.showerror("Password","Password: 6-10 Characters, with a capital alphabet, small alphabet, number and special character")
 
 
     def run(self):
