@@ -2,6 +2,7 @@
 import customtkinter as ctk
 import re 
 import sys
+from tkinter import messagebox
 
 user_re=re.compile(r"^[a-zA-Z0-9@_]{4,6}$")
 pwd_re=re.compile(r"^(?=.{6,10}$)[a-z]+[A-Z]+[0-9]+[!@#$%^&*]+$")
@@ -51,9 +52,11 @@ class Login_app:
 
         self.register_frame = ctk.CTkFrame(self.form, fg_color="transparent")
         self.register_frame.pack(anchor="w", pady=(0, 10))
+        
         self.dont_label=ctk.CTkLabel(self.register_frame,text="Don't have an account?",font=("Helvetica",16),text_color=TEXT_MUTED)
         self.dont_label.pack(side="left")
-        self.register_btn=ctk.CTkButton(self.register_frame,text="Register",font=("Helvetica",16,"underline"), text_color=TEXT_MUTED)
+        
+        self.register_btn=ctk.CTkButton(self.register_frame,text="Register",font=("Helvetica",16,"underline"), text_color=TEXT_MUTED,fg_color="transparent")
         self.register_btn.pack(padx=5,side="left")
 
         self.user_entry=ctk.CTkEntry(self.form,placeholder_text="User ID",width=380,height=45,fg_color=FIELD,corner_radius=8)
@@ -72,17 +75,26 @@ class Login_app:
         self.error_label.pack(pady=(4,0))
         self.login_btn=ctk.CTkButton(self.form,width=380,height=50,text="LOGIN",text_color="#FFFFFF",font=("Helvetica",16,"bold"),fg_color=PURPLE,corner_radius=10,hover_color=PURPLE_DIM,command=self.error_check)
         self.login_btn.pack(pady=(20,0))
-        def toggle_pwd(self):
-            self.pwd_visible["on"]= not self.pwd_visible["on"]
-            self.pwd_entry.configure(show="" if self.pwd_visible["on"] else "*")
-            self.eye_btn.configure(text="🕶️"  if self.pwd_visible["on"] else "👓")
+    def toggle_pwd(self):
+        self.pwd_visible["on"]= not self.pwd_visible["on"]
+        self.pwd_entry.configure(show="" if self.pwd_visible["on"] else "*")
+        self.eye_btn.configure(text="🕶️"  if self.pwd_visible["on"] else "👓")
 
-        def error_check(self):
-            self.userid=self.user_entry.get().strip()
-            self.pwd=self.pwd_entry.get().strip()
-            if not self.userid or not self.pwd:
-                self.error_label.configure(text="Please enter the detai")
-        
+    def error_check(self):
+        self.userid=self.user_entry.get().strip()
+        self.pwd=self.pwd_entry.get().strip()
+        if not self.userid or not self.pwd:
+            #self.error_label.configure(text="Please enter the details")
+            self.messagebox.show("Details","Please enter the details")
+         
+
+        elif not user_re.match(self.userid):
+            #self.error_label.configure(text="Username: 4-20 Letters, Numbers or _ / @ only")
+            self.messagebox.show("Username","Username: 4-20 Letters, Numbers or _ / @ only") 
+
+        elif not pwd_re.match(self.pwd):
+            #self.error_label.configure(text="Password: 6-10 Characters, with a capital alphabet, small alphabet, number and special character") 
+            self.messagebox.show("Password","Password: 6-10 Characters, with a capital alphabet, small alphabet, number and special character")
 
 
     def run(self):
