@@ -45,7 +45,7 @@ class StoryPage:
         self.index=0
         self.typing=False
         self.after_id=None
-        self.ref_pil=load_image("reference.png")
+        self.ref_image=load_image("reference.png")
         self.ref_image=None
 
         self.app=ctk.CTK()
@@ -106,4 +106,55 @@ class StoryPage:
           
             self.ref_frame=ctk.CTkFrame(self.mid_frame,fg_color=PANEL,border_width=2,border_color=PURPLE,corner_radius=10)
 
+            self.ref_frame.grid(row=0,column=2,sticky="nsew")
+            if self.ref_image:
+                self.ref_label=ctk.CTkLabel(self.ref_frame,fg_color=TEXT_MUTED,text="Image",image=self.ref_image,font=("Helvetica",20,"bold"))
+
+                self.ref_label.place(relx=0.5,rely=1,anchor="s")
+          
+            else:
+                self.ref_label=ctk.CTkLabel(self.ref_frame,fg_color=TEXT_MUTED,text="Image",font=("Helvetica",20,"bold"))
+
+                self.ref_label.place(relx=0.5,rely=0.5,anchor="center")
+            
+            self.ref_frame.bind("<Configure>",self.resize_ref)
+
+
+    def footer(self):
+        self.footer_frame=ctk.CTkFrame(self.app,fg_color="transparent")
+        self.footer_frame.grid(row=2,column=0,stock="nsew",padx=30,pady=20)
+        self.footer_frame.grid_columnconfigure(1,weight=1)
+
+        self.sound_label=ctk.CTkButton(self.footer_frame,text="🔊",command=self.toggle_audio)
+        self.sound_label.grid(row=0,column=0)
+
+        self.skip_label=ctk.CTkButton(self.footer_frame,text="SKIP",font=("Helvetica",16,"bold"),width=150,height=50,text_color= "#FFFFFF",command=self.skip,hover_color=PURPLE_DIM)
+        self.skip_label.grid(row=0,column=2,sticky="e")
+
+    def make_narrator_image(self):
+        img=load_image("narrator.png")
+        if img is None:
+            return None
+        img=ImageOps.fit(img,(NARRATOR_SIZE,NARRATOR_SIZE))
+        mask=Image.new("L",img.size,0)
+        ImageDraw.Draw(mask).ellipse((0,0,*img.size),fill=255)
+        img.putalpha(mask)
+        self.narrator_image=ctk.CTkImage(img,size=(NARRATOR_SIZE,NARRATOR_SIZE))
+        return self.narrator_image
+
+    def resize_ref(self,event):
+        if not self.ref_image:
+            return
+        box=(max(50,event.width-24),max(50,event.height-24))
+        fit_img=ImageOps.contain(self.ref_image,box)
+        self.ref_image=ctk.CTkImage(self.fit_image,size=self.fit_image.size)
+        return self.ref_image
+    
+    def show_line(self,i):
+        self.index=i
+        if self.after_id:
+            self.app.after_cancel(self.after_id)
+            self.full_text=LINES[i]
+            self.char=0
+            self.typing=True
             
