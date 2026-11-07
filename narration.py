@@ -128,8 +128,8 @@ class StoryPage:
         self.sound_label=ctk.CTkButton(self.footer_frame,text="🔊",command=self.toggle_audio)
         self.sound_label.grid(row=0,column=0)
 
-        self.skip_label=ctk.CTkButton(self.footer_frame,text="SKIP",font=("Helvetica",16,"bold"),width=150,height=50,text_color= "#FFFFFF",command=self.skip,hover_color=PURPLE_DIM)
-        self.skip_label.grid(row=0,column=2,sticky="e")
+        self.skip_button=ctk.CTkButton(self.footer_frame,text="COMPLETE",font=("Helvetica",16,"bold"),width=150,height=50,text_color= "#FFFFFF",command=self.skip,hover_color=PURPLE_DIM)
+        self.skip_button.grid(row=0,column=2,sticky="e")
 
     def make_narrator_image(self):
         img=load_image("narrator.png")
@@ -154,7 +154,39 @@ class StoryPage:
         self.index=i
         if self.after_id:
             self.app.after_cancel(self.after_id)
-            self.full_text=LINES[i]
-            self.char=0
-            self.typing=True
-            
+        self.full_text=LINES[i]
+        self.char=0
+        self.typing=True
+        self.text_label.configure(text="")
+        self.hint_label.configure(text=f"{i+1}/{len(STORY)}")
+        self.play_voice(i)
+        self.type_animation()
+    def type_animation(self):
+        self.char+=1
+        self.text_label.configure(text=self.full_text[:self.char])
+        if self.char<len(self.full_text):
+            self.after_id=self.app.after(DELAY,self.type_animation)
+        else:
+            self.end_typing()
+
+    def end_typing(self):
+        self.end_typing=False
+        self.text_label.configure(text=self.full_text)
+        last=self.index==len(STORY)-1
+        if last:
+            self.skip_button.configure(state="normal",fg_color=PURPLE)
+            self.hint_label.configure(text=f"{self.index+1}/{len(STORY)}")
+
+        else:
+            self.hint_label.configure(text=f"{self.index+1}/{len(STORY)}   Click To Continue")
+    
+    def next(self):
+        if self.typing:
+            if self.after_id:
+                self.app.after_cancel(self.after_id)
+                self.end_typing()
+        elif self.index<len(STORY)-1:
+            self.show_line(self.index+1)
+
+    def play_voice(self,i):
+        if not AUDIO_OK
