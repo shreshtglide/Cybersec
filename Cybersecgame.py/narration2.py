@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import tkinter as tk
+
 try:
     from PIL import Image,ImageDraw,ImageOps
 
@@ -154,7 +155,7 @@ class StoryPage:
         self.index=i
         if self.after_id:
             self.app.after_cancel(self.after_id)
-        self.full_text=LINES[i]
+        self.full_text=STORY[i]
         self.char=0
         self.typing=True
         self.text_label.configure(text="")
@@ -189,4 +190,30 @@ class StoryPage:
             self.show_line(self.index+1)
 
     def play_voice(self,i):
-        if not AUDIO_OK
+        if not AUDIO or self.muted:
+            return
+        self.path=os.path.join(BASE,"audio",f"LEVEL_1_{i+1}.mp3")
+        if os.path.exists(self.path):
+            try:
+                pygame.mixer.music.load(self.path)
+                pygame.mixer.music.play()
+            except Exception:
+                pass
+
+    def toggle_audio(self):
+        self.muted=not self.muted
+        self.sound_label.configure(text="🔇" if self.muted else "🔊")
+        if self.muted:
+            if AUDIO:
+                pygame.mixer.music.stop()
+        else:
+            self.play_voice(self.index)
+
+    def run(self):
+        self.app.mainloop()
+    
+storyobj = StoryPage()
+storyobj.run()
+    
+        
+
