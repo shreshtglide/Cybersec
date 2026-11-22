@@ -52,7 +52,12 @@ class QuizApp:
             ("Router Too Far", 1, 0),
             ("A Problem With The Network Adapter", 1, 1)
         ]
-
+        options_flipped = [
+                    ("Ethernet: Indirect or setup-related cause. While Ethernet does not cause WiFi drops itself, plugging in a cable can disable the PC WiFi adapter or cause a fallback or conflict if the cable is loose or unplugged mid-session. In a quiz context, it represents the fix someone tries after WiFi keeps dropping.", 0, 0),
+                    ("Many people on the phone: Bandwidth, router overload, or interference. If on the phone means people streaming video, gaming, or making WiFi or VoIP calls over the same network, heavy traffic and device congestion can strain an overloaded or older router, causing brief disconnects or timeouts. Standard cellular calls will not affect home WiFi.", 0, 1),
+                    ("Router is too far: Weak or unstable wireless signal. As distance increases, especially through walls, floors, or appliances, the radio signal weakens and suffers more interference, causing packet loss and sudden WiFi dropouts.", 1, 0),
+                    ("Network adapter problem: Hardware, driver, or power management drops. A loose or failing WiFi card or antenna, a buggy driver update, overheating, or operating system power-saving features that shut off the wireless radio can cause the PC to abruptly lose its WiFi connection.", 1, 1)
+                ]
         for text, row, col in options:
             btn = ctk.CTkButton(
                 self.options_frame,
@@ -66,6 +71,8 @@ class QuizApp:
                 corner_radius=6,
                 
             )
+
+
        
             btn._text_label.configure(wraplength=230, justify="center")
             btn.grid(row=row, column=col, padx=8, pady=8, sticky="nsew")
